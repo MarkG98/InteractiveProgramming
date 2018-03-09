@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import pygame
 from pygame.locals import *
 import time
@@ -21,6 +22,7 @@ with open('fandango_score_comparison.csv') as f:
         IMDB = row[13],
         count +=1
     print(count)
+
 
 class PyGameWindowView(object):
     """ A view of movie visualizer rendered in a Pygame window """
@@ -46,12 +48,34 @@ class VisualizerModel(object):
     def __init__(self):
         self.dots = []
         for i in range(count):
-            self.dots.append(Dot(10, random.randrange(250,750), random.randrange(250,750)))
+            self.dots.append(Dot(10, random.randrange(640), random.randrange(480)))
+
+        c = []
+        for i in range(count):
+            c.append('c'+str(i))
+            c[i] = Dot(10, random.randrange(640), random.randrange(480))
+            shouldprint = True
+            for j in range(len(c)):
+                if i != j:
+                    dist = int(math.hypot(c[i].x - c[j].x, c[i].y - c[j].y))
+                    if dist < int(c[i]. radius *2):
+                        shouldprint = False
+            # if shouldprint:
+            #     c[i].new()
+            #     pygame.display.update()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
 
     def __str__(self):
         output_lines = []
+        # convert each brick to a string for outputting
         for dot in self.dots:
             output_lines.append(str(dot))
+        # print one brick per line
         return "\n".join(output_lines)
 
 class Dot(object):
@@ -65,11 +89,14 @@ class Dot(object):
         return "Dot radius=%f, x=%f, y=%f" % (self.radius,
                                               self.x,
                                               self.y)
+    def new(self):
+        self.dots = []
+        self.dots.append(Dot(10, random.randrange(640), random.randrange(480)))
 
 if __name__ == '__main__':
     pygame.init()
 
-    size = (1000, 1000)
+    size = (640, 480)
 
     model = VisualizerModel()
     print(model)
