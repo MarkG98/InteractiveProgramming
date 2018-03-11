@@ -25,9 +25,10 @@ class PyGameWindowView(object):
 
 class VisualizerModel(object):
     """ Encodes a model of the game state """
-    def __init__(self):
+    def __init__(self, size):
+        self.size = size
         self.dots = []
-        self.dots.append(Dot(50, 640//2, 480//2))
+        self.dots.append(Dot(50, size[0]//2, size[1]//2))
 
     def __str__(self):
         output_lines = []
@@ -82,7 +83,7 @@ if __name__ == '__main__':
 
     size = (640, 480)
 
-    model = VisualizerModel()
+    model = VisualizerModel(size)
     print(model)
     view = PyGameWindowView(model, size)
 
