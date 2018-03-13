@@ -4,8 +4,9 @@ import pygame
 from pygame.locals import *
 import time
 import math
+import copy
 
-color = 100,149,237
+#color =
 screen_color = 255,250,240
 
 class PyGameWindowView(object):
@@ -16,7 +17,9 @@ class PyGameWindowView(object):
             containing the width and height """
         self.model = model
         self.screen = pygame.display.set_mode(size)
+        self.size = size
         self.home = True
+
 
     def draw(self):
         """ Draw the current game state to the screen """
@@ -25,14 +28,60 @@ class PyGameWindowView(object):
             pygame.draw.circle(self.screen,
                              pygame.Color(dot.color[0], dot.color[1], dot.color[2]),
                              (dot.x, dot.y),
-                             dot.radius)
+                             int(dot.radius))
         pygame.display.update()
 
-    def zoom(self, dot):
+    def zoom(self, target):
         """Displays the individual movie-rating dots for the inputed 'dot'"""
+        vr = 1.5
+        vx = 1
+        vy = 1
+        alpha = 255
+        dalpha =1
+        color_loc = pygame.Color(target.color[0], target.color[1], target.color[2])
+
+        #define surface for making dot transparent
+        TransSurface = pygame.Surface((self.size[0],self.size[1]))
+        TransSurface.set_colorkey((0,0,0))
+
+        #copy dots so originals aren't modified and find the target to be zoomed in on
+        dots = copy.deepcopy(self.model.dots)
+
+        while target.x < size[0]//2 and target.y < size[1]//2:
+            self.screen.fill(pygame.Color(255,250,240))
+            for dot in dots:
+                dot.x += vx
+                dot.y += vy
+            print(target.x, target.y)
+            target.radius += vr
+
+            for dot in dots:
+                if dot != target:
+                    pygame.draw.circle(self.screen,
+                                            color_loc,
+                                            (dot.x, dot.y),
+                                            int(dot.radius))
+                else:
+                    pygame.draw.circle(TransSurface,
+                                            color_loc,
+                                            (dot.x, dot.y),
+                                            int(dot.radius))
+            alpha -= dalpha
+            TransSurface.set_alpha(alpha)
+            self.screen.blit(TransSurface, (0, 0))
+            pygame.display.update()
+            time.sleep(0.01)
+
+
         self.screen.fill(pygame.Color(255,250,240))
         self.model.dots = self.model.dot_to_child[dot.label]
 
+
+
+    def returnHome(self):
+        """Returns to the screen with all of the movie dots when in a zoomed in state."""
+        self.model.dots = self.model.home_dots
+        self.home = not self.home
 
 class VisualizerModel(object):
     """ Encodes a model of the game state """
@@ -65,7 +114,7 @@ class Dot(object):
         self.radius = radius
         self.x = x
         self.y = y
-        self.color = color
+        self.color = 100,149,237
 
     def __str__(self):
         return "Dot radius=%f, x=%f, y=%f" % (self.radius, self.x, self.y)
@@ -89,8 +138,7 @@ class PyGameMouseController(object):
                     self.view.home = not self.view.home
 
         elif event.type == MOUSEBUTTONUP and not self.view.home:
-            self.model.dots = self.model.home_dots
-            self.view.home = not self.view.home
+            self.view.returnHome()
 
 
 if __name__ == '__main__':
