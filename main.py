@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pygame
+import pygame, sys
 from pygame.locals import *
 import time
 import math
@@ -20,6 +20,8 @@ class PyGameWindowView(object):
         self.size = size
         self.home = True
 
+        self.default_font = pygame.font.get_default_font()
+        self.font_renderer = pygame.font.Font(self.default_font, 70)
 
     def draw(self):
         """ Draw the current game state to the screen """
@@ -29,46 +31,46 @@ class PyGameWindowView(object):
                              pygame.Color(dot.color[0], dot.color[1], dot.color[2]),
                              (dot.x, dot.y),
                              int(dot.radius))
+        label = self.font_renderer.render("Some Text", 1, (255,255,255))
         pygame.display.update()
+        self.screen.blit(label, (self.size[0]//2, self.size[1]//2))
 
     def zoom(self, target):
         """Displays the individual movie-rating dots for the inputed 'dot'"""
         vr = 1.5
         vx = 1
         vy = 1
-        alpha = 255
-        dalpha =1
         color_loc = pygame.Color(target.color[0], target.color[1], target.color[2])
-
-        #define surface for making dot transparent
-        TransSurface = pygame.Surface((self.size[0],self.size[1]))
-        TransSurface.set_colorkey((0,0,0))
 
         #copy dots so originals aren't modified and find the target to be zoomed in on
         dots = copy.deepcopy(self.model.dots)
+        for dot in dots:
+            if dot.label == target.label:
+                target = dot
 
         while target.x < size[0]//2 and target.y < size[1]//2:
             self.screen.fill(pygame.Color(255,250,240))
             for dot in dots:
-                dot.x += vx
-                dot.y += vy
-            print(target.x, target.y)
+                if dot.x <= self.size[0]//2 and dot.y < self.size[1]//2:
+                    dot.x += vx
+                    dot.y += vy
+                elif dot.x > self.size[0]//2 and dot.y < self.size[1]//2:
+                    dot.x -= vx
+                    dot.y += vy
+                elif dot.x < self.size[0]//2 and dot.y > self.size[1]//2:
+                    dot.x += vx
+                    dot.y -= vy
+                elif dot.x > self.size[0]//2 and dot.y > self.size[1]//2:
+                    dot.x -= vx
+                    dot.y -= vy
             target.radius += vr
 
             for dot in dots:
-                if dot != target:
-                    pygame.draw.circle(self.screen,
+                pygame.draw.circle(self.screen,
                                             color_loc,
                                             (dot.x, dot.y),
                                             int(dot.radius))
-                else:
-                    pygame.draw.circle(TransSurface,
-                                            color_loc,
-                                            (dot.x, dot.y),
-                                            int(dot.radius))
-            alpha -= dalpha
-            TransSurface.set_alpha(alpha)
-            self.screen.blit(TransSurface, (0, 0))
+
             pygame.display.update()
             time.sleep(0.01)
 
@@ -91,6 +93,8 @@ class VisualizerModel(object):
         self.home_dots = []
         self.dot_to_child = {}
         self.dots.append(Dot(50, 80, 80, "test"))
+        self.dots.append(Dot(50, 160, 160, "test2"))
+        self.dots.append(Dot(50, 300, 100, "test3"))
 
         for dot in self.dots:
             self.dot_to_child[dot.label] = [Dot(50, 160, 160, "fandango"), Dot(50, 240, 240, "rt")]
