@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import pygame
 from pygame.locals import *
 import time
@@ -7,6 +6,8 @@ import csv
 import pylab
 import random
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 with open('fandango_score_comparison.csv') as f:
     reader = csv.reader(f)
@@ -22,7 +23,6 @@ with open('fandango_score_comparison.csv') as f:
         IMDB = row[13],
         count +=1
     print(count)
-
 
 class PyGameWindowView(object):
     """ A view of movie visualizer rendered in a Pygame window """
@@ -47,56 +47,39 @@ class VisualizerModel(object):
     """ Encodes a model of the game state """
     def __init__(self):
         self.dots = []
-        for i in range(count):
-            self.dots.append(Dot(10, random.randrange(640), random.randrange(480)))
+        rad = 200
+        num = 147
+        t = np.random.uniform(0, 2*np.pi, num)
+        r = rad * np.sqrt(np.random.uniform(0, 1, num))
 
-        c = []
         for i in range(count):
-            c.append('c'+str(i))
-            c[i] = Dot(10, random.randrange(640), random.randrange(480))
-            shouldprint = True
-            for j in range(len(c)):
-                if i != j:
-                    dist = int(math.hypot(c[i].x - c[j].x, c[i].y - c[j].y))
-                    if dist < int(c[i]. radius *2):
-                        shouldprint = False
-            # if shouldprint:
-            #     c[i].new()
-            #     pygame.display.update()
-
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
+            x = r * np.cos(t)
+            y = r * np.sin(t)
+            self.dots.append(Dot(10, int(x[i]), int(y[i])))
 
     def __str__(self):
         output_lines = []
-        # convert each brick to a string for outputting
         for dot in self.dots:
             output_lines.append(str(dot))
-        # print one brick per line
         return "\n".join(output_lines)
 
 class Dot(object):
     """ Encodes the state of a dot in the visualizer """
     def __init__(self, radius, x, y):
         self.radius = radius
-        self.x = x
-        self.y = y
+        self.x = 500 + x
+        self.y = 500 + y
 
     def __str__(self):
         return "Dot radius=%f, x=%f, y=%f" % (self.radius,
                                               self.x,
                                               self.y)
-    def new(self):
-        self.dots = []
-        self.dots.append(Dot(10, random.randrange(640), random.randrange(480)))
+
 
 if __name__ == '__main__':
     pygame.init()
 
-    size = (640, 480)
+    size = (1000, 1000)
 
     model = VisualizerModel()
     print(model)

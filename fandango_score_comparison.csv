@@ -1,4 +1,4 @@
-FILM,RottenTomatoes,RottenTomatoes_User,Metacritic,Metacritic_User,IMDB,Fandango_Stars,Fandango_Ratingvalue,RT_norm,RT_user_norm,Metacritic_norm,Metacritic_user_nom,IMDB_norm,RT_norm_round,RT_user_norm_round,Metacritic_norm_round,Metacritic_user_norm_round,IMDB_norm_round,Metacritic_user_vote_count,IMDB_user_vote_count,Fandango_votes,Fandango_Difference
+FILM,RottenTomatoes,RottenTomatoes_User,Metacritic,Metacritic_User,IMDB,Fandango_Stars,Fandango_Ratingvalue,RT_norm,RT_user_norm,Metacritic_norm,Metacritic_user_norm,IMDB_norm,RT_norm_round,RT_user_norm_round,Metacritic_norm_round,Metacritic_user_norm_round,IMDB_norm_round,Metacritic_user_vote_count,IMDB_user_vote_count,Fandango_votes,Fandango_Difference
 Avengers: Age of Ultron (2015),74,86,66,7.1,7.8,5,4.5,3.7,4.3,3.3,3.55,3.9,3.5,4.5,3.5,3.5,4,1330,271107,14846,0.5
 Cinderella (2015),85,80,67,7.5,7.1,5,4.5,4.25,4,3.35,3.75,3.55,4.5,4,3.5,4,3.5,249,65709,12640,0.5
 Ant-Man (2015),80,90,64,8.1,7.8,5,4.5,4,4.5,3.2,4.05,3.9,4,4.5,3,4,4,627,103660,12055,0.5
